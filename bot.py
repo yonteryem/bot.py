@@ -17,6 +17,30 @@ def get_youtube_meme():
         print(f"YouTube Error: {e}")
     return None
 
+def get_reddit_meme():
+    try:
+       
+        sub = random.choice(['memes'])
+        url = f"https://www.reddit.com/r/{sub}/hot.json?limit=25"
+        headers = {"User-Agent": "MyDiscordWebhookBot/1.0"}
+        res = requests.get(url, headers=headers).json()
+        
+        posts = res['data']['children']
+        memes = []
+        for p in posts:
+            data = p['data']
+            post_url = data.get('url', '')
+            # Check for images, gifs, or reddit videos (v.redd.it)
+            if post_url.endswith(('.jpg', '.png', '.gif')) or 'v.redd.it' in post_url:
+                # Sending the reddit permalink ensures Discord embeds it correctly
+                memes.append(f"https://www.reddit.com{data['permalink']}")
+        
+        if memes:
+            return random.choice(memes)
+    except Exception as e:
+        print(f"Reddit Error: {e}")
+    return None
+
 def get_gif_meme():
     try:
         res = requests.get("https://meme-api.com/gimme").json()
@@ -26,14 +50,22 @@ def get_gif_meme():
         return "https://i.imgflip.com/1ur9b0.jpg"
 
 def main():
-    # 75% Video, 25% GIF
-    if random.random() < 0.75:
+    chance = random.random()
+    
+    # 50% YouTube
+    if chance < 0.50:
         meme = get_youtube_meme()
-        if not meme:
-            meme = get_gif_meme()
+    # 40% Reddit (0.50 to 0.90)
+    elif chance < 0.90:
+        meme = get_reddit_meme()
+    # 10% GIFs (0.90 to 1.0)
     else:
         meme = get_gif_meme()
-    
+        
+    # Fallback just in case a scraper fails
+    if not meme:
+        meme = get_gif_meme()
+        
     print(f"Sending meme: {meme}")
     r = requests.post(WEBHOOK_URL, json={"content": meme})
     print(f"Discord Response: {r.status_code}")
