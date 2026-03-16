@@ -18,24 +18,27 @@ def get_meme(subreddit):
             data = response.json()
             if data.get('url'):
                 return data
-    except Exception as e:
-        print(f"Error: {e}")
+    except Exception:
+        pass
     return None
 
 def main():
-    selected_subs = random.sample(SUBREDDITS, 3)
+    target_count = random.randint(3, 6) # Picks a random number between 3 and 6
+    sent_count = 0
     
-    for sub in selected_subs:
+    while sent_count < target_count:
+        sub = random.choice(SUBREDDITS)
         meme = get_meme(sub)
+        
         if meme:
-            # This payload sends ONLY the image. No text, no raw links.
-            payload = {
-                "embeds": [{
-                    "image": {"url": meme['url']}
-                }]
-            }
-            requests.post(WEBHOOK_URL, json=payload)
-            time.sleep(2)
+            url = meme['url']
+            if url.endswith(('.jpg', '.jpeg', '.png', '.gif')):
+                payload = {"embeds": [{"image": {"url": url}}]}
+                response = requests.post(WEBHOOK_URL, json=payload)
+                
+                if response.status_code == 204:
+                    sent_count += 1
+                    time.sleep(2)
 
 if __name__ == "__main__":
     main()
