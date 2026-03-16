@@ -11,13 +11,11 @@ SUBREDDITS = [
 ]
 
 def get_meme(subreddit):
-    # This API bypasses Reddit's block on GitHub servers
     url = f"https://meme-api.com/gimme/{subreddit}"
     try:
         response = requests.get(url, timeout=10)
         if response.status_code == 200:
             data = response.json()
-            # Failsafe: Make sure it has an image URL
             if data.get('url'):
                 return data
     except Exception as e:
@@ -30,9 +28,11 @@ def main():
     for sub in selected_subs:
         meme = get_meme(sub)
         if meme:
-            # Matches your exact requested format
+            # This payload sends ONLY the image. No text, no raw links.
             payload = {
-                "content": f"**{meme['title']}** (from r/{sub})\n{meme['url']}"
+                "embeds": [{
+                    "image": {"url": meme['url']}
+                }]
             }
             requests.post(WEBHOOK_URL, json=payload)
             time.sleep(2)
