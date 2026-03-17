@@ -5,9 +5,28 @@ import time
 WEBHOOK_URL = "https://discord.com/api/webhooks/1482843854549024798/_YHgjGH11nvT5IYTJEpmNAx4MVpvIofN8BVEjcpBPpqzN3mnPPv-JHb1qpOHQ8015hvF"
 
 SUBREDDITS = [
-    'memes', 'dankmemes', 'FunnyandSad', 'wholesomememes', 
-    'PrequelMemes', 'terriblefacebookmemes', 'ProgrammerHumor',
-    'humor', 'funny', 'me_irl', 'HistoryMemes', 'BikiniBottomTwitter'
+    'dankmemes', 'shitposting', 'HolUp', 'ImFinnaGoToHell', 'cursedcomments',
+    'okbuddyretard', 'SipsTea', 'Unexpected', 'dank_meme', 'meme', 'Discordmemes',
+    '2meirl4meirl', 'me_irl', 'memes', 'PerfectlyCutBooms', 'perfectlycutscreams',
+    'hmm', 'hmmm', 'blursedimages', 'cursedimages', 'meirl', 'wtf',
+    'watchpeopledieinside', 'youseeingthisshit', 'nonononoyes', 'yesyesyesno',
+    'maybemaybemaybe', 'madlads', '2mad4madlads', 'insanepeoplefacebook',
+    'crackheadcraigslist', 'comedyheaven', 'comedynecromancy', 'bonehurtingjuice',
+    'antimeme', 'technicallythetruth', 'greentext', '4chan', 'greentexts',
+    'fakehistoryporn', 'bertstrips', 'surrealmemes', 'deepfriedmemes', 'nukedmemes',
+    'moldymemes', 'terriblefacebookmemes', 'ihadastroke', 'engrish', 'boneappletea',
+    'skamtebord', 'softwaregore', 'oldpeoplefacebook', 'youngpeopleyoutube',
+    'rareinsults', 'clevercomebacks', 'murderedbywords', 'suicidebywords',
+    'kamikazebywords', 'wellthatsucks', 'crappyoffbrands', 'awfuleverything',
+    'atbge', 'diwhy', 'redneckengineering', 'idiotsincars', 'tooktoomuch',
+    'imthemaincharacter', 'donthelpjustfilm', 'kidsarefuckingstupid', 'whenthe',
+    'wordington', 'dramatictext', 'shitpostcrusaders', 'BikiniBottomTwitter',
+    'TrollCoping', 'depression_memes', 'darkhumor', 'HistoryMemes', 'PrequelMemes', 
+    'LotRMemes', 'raimimemes', 'NolanBatmanMemes', 'marvelmemes', 'gamingmemes', 
+    'LeagueOfMemes', 'ValorantMemes', 'MinecraftMemes', 'Overwatch_Memes',
+    'ProgrammerHumor', 'mathmemes', 'dndmemes', 'Grimdank', 'PoliticalCompassMemes',
+    'facepalm', 'absoluteunits', 'tifu', 'mildlyinfuriating', 'ContagiousLaughter',
+    'ComedyCemetery', 'ComedyHell', 'ihavesex', 'iamverybadass', 'iamverysmart'
 ]
 
 def get_meme(subreddit):
@@ -23,11 +42,15 @@ def get_meme(subreddit):
     return None
 
 def main():
-    target_count = random.randint(3, 6) # Picks a random number between 3 and 6
+    target_count = random.randint(3, 6)
     sent_count = 0
+
+    available_subs = random.sample(SUBREDDITS, len(SUBREDDITS))
     
-    while sent_count < target_count:
-        sub = random.choice(SUBREDDITS)
+    for sub in available_subs:
+        if sent_count >= target_count:
+            break
+            
         meme = get_meme(sub)
         
         if meme:
