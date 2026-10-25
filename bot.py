@@ -1,8 +1,10 @@
+import os
 import requests
 import random
 import time
 
-WEBHOOK_URL = "https://discord.com/api/webhooks/1482843854549024798/_YHgjGH11nvT5IYTJEpmNAx4MVpvIofN8BVEjcpBPpqzN3mnPPv-JHb1qpOHQ8015hvF"
+# Securely pull the webhook from GitHub Secrets
+WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK")
 
 SUBREDDITS = [
     'dankmemes', 'shitposting', 'HolUp', 'ImFinnaGoToHell', 'cursedcomments',
@@ -42,6 +44,10 @@ def get_meme(subreddit):
     return None
 
 def main():
+    if not WEBHOOK_URL:
+        print("Error: DISCORD_WEBHOOK secret is missing.")
+        return
+
     target_count = random.randint(3, 6)
     sent_count = 0
 
@@ -57,11 +63,16 @@ def main():
             url = meme['url']
             if url.endswith(('.jpg', '.jpeg', '.png', '.gif')):
                 payload = {"embeds": [{"image": {"url": url}}]}
-                response = requests.post(WEBHOOK_URL, json=payload)
-                
-                if response.status_code == 204:
-                    sent_count += 1
-                    time.sleep(2)
+                try:
+                    response = requests.post(WEBHOOK_URL, json=payload, timeout=10)
+                    
+                    if response.status_code == 204:
+                        print(f"Successfully sent meme from r/{sub}")
+                        sent_count += 1
+                        time.sleep(2)
+                except Exception as e:
+                    print(f"Error sending meme to Discord: {e}")
 
 if __name__ == "__main__":
     main()
+
