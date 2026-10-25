@@ -1,23 +1,24 @@
-name: Send Meme
+name: Memes Bot
 on:
   schedule:
-    - cron: '*/30 * * * *'
-  workflow_dispatch:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:   
 
 jobs:
-  run_bot:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Checkout Code
+        uses: actions/checkout@v5
+ 
+      - name: Setup Python
+        uses: actions/setup-python@v6
         with:
           python-version: '3.11'
-          
-      - name: Install dependencies
-        run: pip install requests
-        
-      - name: Run script
-        run: python bot.py
+
+      - name: Run Memes Script
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: |
+          pip install requests
+          python memebot.py
